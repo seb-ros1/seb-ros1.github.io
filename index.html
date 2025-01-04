@@ -189,7 +189,7 @@
                     snake.pop();
                 }
                 // Add new head to the snake
-                let newHead = { x: snakeX,y: snakeY};
+                let newHead = { x: snakeX, y: snakeY};
 
                 // Check if the snake hits the wall or itself
                 if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
@@ -210,5 +210,4 @@
         }
     </script>
 </body>
-
 </html>
