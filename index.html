@@ -18,19 +18,6 @@
 
         }
 
-        #closeButton {
-            display: none;
-            position: fixed;
-            top: 10px;
-            right: 25px;
-            z-index: 1001;
-            font-size: 28px;
-            color: #555;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
         body {
             display: flex;
             justify-content: center;
@@ -73,14 +60,12 @@
         <button id="snakeButton" class="astext">Snake</button>
     </div>
 
-    <button id="closeButton">&times;</button>
     <canvas id="gameCanvas"></canvas>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const snakeButton = document.getElementById("snakeButton");
-        const closeButton = document.getElementById("closeButton");
         let gameRunning = false;
 
         // Resize canvas to fit the window
@@ -95,7 +80,6 @@
             if (!gameRunning) {
                 gameRunning = true;
                 canvas.style.display = "block";
-                closeButton.style.display = "block";
                 resizeCanvas();
                 startGame();
             } else {
@@ -104,18 +88,10 @@
 
         }
 
-        // Hide the canvas and stop the game when the close button is clicked
-        closeButton.onclick = function () {
-            canvas.style.display = "none";
-            closeButton.style.display = "none";
-            gameRunning = false;
-            clearInterval(game);
-        }
-
          // Start the Snake game
         function startGame() {
 
-            const box = 20;
+            const box = 20; // Size of each cell in the grid
             let snake = [];
             snake[0] = { x: 9 * box, y: 10 * box };
 
@@ -128,6 +104,7 @@
             let d;
 
             document.addEventListener("keydown", direction);
+            document.addEventListener("touchstart", directionMobile);
 
             //Moving the Snake
             function direction(event) {
@@ -138,6 +115,19 @@
                 } else if (event.keyCode == 68 && d != "LEFT") {
                     d = "RIGHT";
                 } else if (event.keyCode == 83 && d != "UP") {
+                    d = "DOWN";
+                }
+
+            }
+            
+            function directionMobile(event) {
+                if (event.touches[0].clientX < window.innerWidth / 2 && d != "RIGHT") {
+                    d = "LEFT";
+                } else if (event.touches[0].clientY < window.innerHeight / 2 && d != "DOWN") {
+                    d = "UP";
+                } else if (event.touches[0].clientX > window.innerWidth / 2 && d != "LEFT") {
+                    d = "RIGHT";
+                } else if (event.touches[0].clientY > window.innerHeight / 2 && d != "UP") {
                     d = "DOWN";
                 }
             }
@@ -173,6 +163,9 @@
                 let snakeX = snake[0].x;
                 let snakeY = snake[0].y;
 
+                let tempX = 0;
+                let tempY = 0;
+
                 if (d == "LEFT") snakeX -= box;
                 if (d == "UP") snakeY -= box;
                 if (d == "RIGHT") snakeX += box;
@@ -181,10 +174,20 @@
                 // Check if the snake eats the food
                 if (snakeX == food.x && snakeY == food.y) {
                     score++;
+
+                    tempX = Math.floor(Math.random() * canvas.width);
+                    tempY = Math.floor(Math.random() * canvas.height);
+
+                    tempX -= tempX % box;
+                    tempY -= tempY % box;
+
                     food = {
-                        x: Math.floor(Math.random() * 19 + 1) * box,
-                        y: Math.floor(Math.random() * 19 + 1) * box
+                        x: tempX,
+                        y: tempY
                     };
+                    
+                    console.log(food.x + " " + food.y);
+                    console.log (canvas.width + " " + canvas.height);
                 } else {
                     snake.pop();
                 }
